@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.32
+# v0.19.45
 
 using Markdown
 using InteractiveUtils
@@ -369,7 +369,7 @@ end
 question_box(md"Why is the jacobian zero for all values of ``\theta``?")
 
 # ╔═╡ 0a0ceae3-e43b-441c-86ae-ce4288191641
-still_missing(md"Write your answer here.")
+still_missing(md"The function f is piecewise constant, because it gives back an element of x itself, and the derivative of a constant or piecewise constant is 0 (no slope).")
 
 # ╔═╡ e6efe06c-8833-4a6b-8086-b7ebe91ee703
 md"""## Perturbed Layer"""
@@ -430,7 +430,7 @@ end
 question_box(md"What can you say about the derivatives of the perturbed maximizer?")
 
 # ╔═╡ 62821026-2a31-446a-aaa6-8921ce35414f
-still_missing(md"Write your answer here.")
+still_missing(md"It works ! Through several samples and and perturbation, it is smoothing the f function, making it differentiable.")
 
 # ╔═╡ 6801811b-f68a-43b4-8b78-2f27c0dc6331
 md"""
@@ -456,7 +456,7 @@ The optimization block has meaningful gradients $\implies$ we can backpropagate 
 question_box(md"What are the properties of ``\mathcal{L}_{\varepsilon}^{\text{FY}}?``")
 
 # ╔═╡ af3c852c-f22d-4938-be2a-05e9c307c734
-still_missing(md"Write your answer here.")
+still_missing(md"Must be diffenrentiable for it to work, strictly convex.")
 
 # ╔═╡ 701f4d68-0424-4f9f-b904-84b52f6a4745
 md"""Let's define the Fenchel-Young loss by using the `FenchelYoungLoss` wrapper from `InferOpt`:"""
@@ -489,7 +489,7 @@ contour(X, Y, Z; color=:turbo, fill=true, xlabel="θ₁", ylabel="θ₂")
 question_box(md"What happens when $\varepsilon = 0$? What happens when $\varepsilon$ increases?")
 
 # ╔═╡ 0a10bc50-9129-4ada-9c8f-28645b766181
-still_missing(md"Write your answer here.")
+still_missing(md"The bigger the epsilon, the more the contour of the gradient gets put inside the polytope, and the smoother it gets. When epsilon is zero (get non-differentiable, we go back to a piecewise f function and we can see the slope (isocontour) getting blocky as the f function gets less and less smooth (back to piecewise constance).")
 
 # ╔═╡ 3a84fd20-41fa-4156-9be5-a0371754b394
 md"""
@@ -716,13 +716,13 @@ Let $D = (V, A)$ be a digraph, $(c_a)_{a \in A}$ the cost associated to the arcs
 question_box(md"When the cost function is non-negative, which algorithm can we use ?")
 
 # ╔═╡ 0b5a594a-9a6b-4861-b26c-b04127752051
-still_missing(md"Write your answer here.")
+still_missing(md"Dijkstra")
 
 # ╔═╡ 4050b2c4-628c-4647-baea-c50236558712
 question_box(md"In the case the graph contains no absorbing cycle, which algorithm can we use ? 	On which principle is it based ?")
 
 # ╔═╡ da9bab9e-96d0-4063-9cb8-0e4433a7a7bc
-still_missing(md"Write your answer here.")
+still_missing(md"Bellman Ford")
 
 # ╔═╡ 654066dc-98fe-4c3b-92a9-d09efdfc8080
 md"""
@@ -733,7 +733,7 @@ In the following, we will perturb or regularize the output of a neural network t
 question_box(md"In the general case, can we fix the maximum length of a feasible solution of the shortest path problem ? How ? Can we derive an dynamic programming algorithm based on this ?")
 
 # ╔═╡ f5ee68f1-3f53-44dd-8390-a39b3df4b840
-still_missing(md"Write your answer here.")
+still_missing(md"Yes. At maximum, the longest possible path visits all the cells of the gridgraph, so n (for each column you select one node). Shortest path must be no more than that. Based on Bellman-Ford, you can easily stop this DP algorithm when stopping after the given number of arc relaxations.")
 
 # ╔═╡ dc359052-19d9-4f29-903c-7eb9b210cbcd
 md"""
@@ -749,7 +749,7 @@ The maximizer needs to take predicted weights `θ` as their only input, and can 
 
 # ╔═╡ 20999544-cefd-4d00-a68c-cb6cfea36b1a
 function dijkstra_maximizer(θ::AbstractMatrix; kwargs...)
-	g = GridGraph(-θ; directions=QUEEN_DIRECTIONS)
+	g = GridGraph(-θ; directions=QUEEN_DIRECTIONS) # minus since we transform a minimization into a maximization
 	path = grid_dijkstra(g, 1, nv(g))
 	y = path_to_matrix(g, path)
 	return y
@@ -932,7 +932,7 @@ During training, we want to evaluate the quality of the predicted paths, both on
 question_box(md"What is the link in our problem between the shortest path cost ratio and the gap of a given solution with respect to the optimal solution ?")
 
 # ╔═╡ 4b1ccd02-720b-4b82-a373-2599108e60d8
-still_missing(md"Write your answer here")
+still_missing(md"Gap to optimal solution (as a fraction)")
 
 # ╔═╡ 9eb0ca01-bd65-48df-ab32-beaca2e38482
 md"""
@@ -1171,17 +1171,8 @@ md"""
 # ╔═╡ 6ed223f4-de31-43f7-a16f-16523c1d61ea
 md"As already seen in the previous sections, we wrap our shortest path algorithm in a `PerturbedAdditive`"
 
-# ╔═╡ 8b2bd08c-866a-4c6e-a2fc-261dc8c05f2a
-chosen_maximizer = bellman_maximizer
-
-# ╔═╡ 73607123-a784-483e-9241-772e5937d59d
-perturbed_maximizer = PerturbedAdditive(chosen_maximizer; ε=ε, nb_samples=M)
-
 # ╔═╡ 13945989-fb32-4027-a67b-e2a9a9254446
 md"And define the associated Fenchel Young loss:"
-
-# ╔═╡ 2e926dc4-0f12-411e-85e2-5dcffdcc1266
-loss = FenchelYoungLoss(perturbed_maximizer)
 
 # ╔═╡ b7674b98-526c-40ee-bf83-a9d6e7be6e4f
 encoder = deepcopy(initial_encoder)
@@ -1196,9 +1187,6 @@ md"""
 From the generic definition of the pipeline we define a loss function compatible with `Flux.jl` package. Its definition depends on the learning setting we consider.
 In this subsection, we are in a learning by imitation setting
 """
-
-# ╔═╡ 9b351fbd-2820-4353-b3fa-ec0e6d07d861
-imitation_flux_loss(x, y, θ) = loss(encoder(x), y)
 
 # ╔═╡ b4451d05-1ac5-4962-88d8-e59d9ca225ea
 warning_box(md"If you want to use the `train_function!` generic function defined above, the loss needs to take as argument x, y and θ in this order, even if it does not use all of them.")
@@ -1218,18 +1206,6 @@ danger(md"Click the checkbox to activate the training cell $(@bind train CheckBo
 
 It may take some time to run and affect the reactivity of the notebook. Then you can read what follows.")
 
-# ╔═╡ 83a14158-33d1-4f16-85e1-2726c8fbbdfc
-loss_history, gap_history, final_encoder = train ? train_function!(;
-	encoder=encoder,
-	maximizer=chosen_maximizer,
-	loss=imitation_flux_loss,
-	train_data=train_dataset,
-	test_data=test_dataset,
-	lr_start=lr_start,
-	batch_size=batch_size,
-	nb_epoch=nb_epochs
-) : (zeros(nb_epochs, 2), zeros(nb_epochs + 1, 2), encoder);
-
 # ╔═╡ 4b31dca2-0195-4899-8a3a-e9772fabf495
 md"""
 #### 5) Plot results
@@ -1239,9 +1215,6 @@ md"""
 md"""
 Loss and gap over epochs, train and test datasets.
 """
-
-# ╔═╡ 66d385ba-9c6e-4378-b4e0-e54a4df346a5
-plot_loss_and_gap(loss_history, gap_history)
 
 # ╔═╡ db799fa2-0e48-43ee-9ee1-80ff8d2e5de7
 md"""
@@ -1256,6 +1229,63 @@ md"""
 
 # ╔═╡ 01a1fd52-ff6c-44c6-ab1a-d1c141a4d54e
 TwoColumn(md"Choose dataset you want to evaluate on:", md"""data = $(@bind data Select([train_dataset => "train", test_dataset => "test"]))""")
+
+# ╔═╡ b1a44835-58d7-462f-a0d4-85bc02d3fdc6
+md"Predictions of the trained neural network:"
+
+# ╔═╡ 39daeb26-66d6-4a05-979f-76666444c73b
+md"Predictions of the initial untrained neural network:"
+
+# ╔═╡ 9a9b3942-72f2-4c9e-88a5-af927634468c
+md"""
+### b) Learning by imitation with multiplicative perturbation
+"""
+
+# ╔═╡ 1ff198ea-afd5-4acc-bb67-019051ff149b
+md"""
+We introduce a variant of the additive pertubation defined above, which is simply based on an element-wise product $\odot$:
+"""
+
+# ╔═╡ 44ece9ce-f9f1-46f3-90c6-cb0502c92c67
+md"""
+${y}_\varepsilon^\odot (\theta) := \mathbb{E}_Z \bigg[\operatorname{argmax}_{y \in \mathcal{C}} (\theta \odot e^{\epsilon Z - \varepsilon^2 \mathbf{1} / 2})^\top y \bigg]$
+"""
+
+# ╔═╡ 5fe95aa5-f670-4329-a933-240a8c074dea
+question_box(md"What is the advantage of this perturbation compared with the additive one in terms of combinatorial problem ? Which algorithm can we use to compute shortest paths ?")
+
+# ╔═╡ 43907e7e-8399-4edd-b3cf-0637064e72a6
+still_missing(md"Multiplying + with + gives +, - with - gives + so we have no more negative weights -> We can therefore use Dijkstra algo which is faster than Bellman-Ford.")
+
+# ╔═╡ 43d68541-84a5-4a63-9d8f-43783cc27ccc
+md"We omit the details of the loss derivations and concentrate on implementation."
+
+# ╔═╡ 5c6d39b0-9942-4173-9455-39cb3c174873
+TODO("Implement the training similarly to previous subsection, by using a multiplicative perturbation instead of the additive one.")
+
+# ╔═╡ 99468dd9-4b97-48e6-803b-489dc1cefdf8
+hint(md"You can modify the previous additive implementation below, by replacing the `PerturbedAdditive` regularization with a `PerturbedMultiplicative` one. You can also modify use `dijkstra_maximizer` instead of `belmann_maximizer` as the CO algorithm, which runs faster.")
+
+# ╔═╡ 2e926dc4-0f12-411e-85e2-5dcffdcc1266
+loss = FenchelYoungLoss(perturbed_maximizer)
+
+# ╔═╡ 9b351fbd-2820-4353-b3fa-ec0e6d07d861
+imitation_flux_loss(x, y, θ) = loss(encoder(x), y)
+
+# ╔═╡ 83a14158-33d1-4f16-85e1-2726c8fbbdfc
+loss_history, gap_history, final_encoder = train ? train_function!(;
+	encoder=encoder,
+	maximizer=chosen_maximizer,
+	loss=imitation_flux_loss,
+	train_data=train_dataset,
+	test_data=test_dataset,
+	lr_start=lr_start,
+	batch_size=batch_size,
+	nb_epoch=nb_epochs
+) : (zeros(nb_epochs, 2), zeros(nb_epochs + 1, 2), encoder);
+
+# ╔═╡ 66d385ba-9c6e-4378-b4e0-e54a4df346a5
+plot_loss_and_gap(loss_history, gap_history)
 
 # ╔═╡ 521f5ffa-2c22-44c5-8bdb-67410431ca2e
 begin
@@ -1281,60 +1311,21 @@ md"""
 # ╔═╡ a1043a1c-5840-4175-aa4a-ef432c353073
 plot_image_weights_path(x, y_true, θ_true)
 
-# ╔═╡ b1a44835-58d7-462f-a0d4-85bc02d3fdc6
-md"Predictions of the trained neural network:"
-
 # ╔═╡ 91e520aa-97a1-40b2-8936-93c93a63011c
 plot_image_weights_path(
 	x, y, -θ; θ_title="Predicted weights", y_title="Predicted path", θ_true=θ_true
 )
-
-# ╔═╡ 39daeb26-66d6-4a05-979f-76666444c73b
-md"Predictions of the initial untrained neural network:"
 
 # ╔═╡ 0e8ea002-6bc8-4684-a72a-f7d7062eecc0
 plot_image_weights_path(
 	x, y₀, -θ₀; θ_title="Initial predicted weights", y_title="Initial predicted path", θ_true=θ_true
 )
 
-# ╔═╡ 9a9b3942-72f2-4c9e-88a5-af927634468c
-md"""
-### b) Learning by imitation with multiplicative perturbation
-"""
-
-# ╔═╡ 1ff198ea-afd5-4acc-bb67-019051ff149b
-md"""
-We introduce a variant of the additive pertubation defined above, which is simply based on an element-wise product $\odot$:
-"""
-
-# ╔═╡ 44ece9ce-f9f1-46f3-90c6-cb0502c92c67
-md"""
-${y}_\varepsilon^\odot (\theta) := \mathbb{E}_Z \bigg[\operatorname{argmax}_{y \in \mathcal{C}} (\theta \odot e^{\epsilon Z - \varepsilon^2 \mathbf{1} / 2})^\top y \bigg]$
-"""
-
-# ╔═╡ 5fe95aa5-f670-4329-a933-240a8c074dea
-question_box(md"What is the advantage of this perturbation compared with the additive one in terms of combinatorial problem ? Which algorithm can we use to compute shortest paths ?")
-
-# ╔═╡ 43907e7e-8399-4edd-b3cf-0637064e72a6
-still_missing(md"Write your answer here.")
-
-# ╔═╡ 43d68541-84a5-4a63-9d8f-43783cc27ccc
-md"We omit the details of the loss derivations and concentrate on implementation."
-
-# ╔═╡ 5c6d39b0-9942-4173-9455-39cb3c174873
-TODO("Implement the training similarly to previous subsection, by using a multiplicative perturbation instead of the additive one.")
-
-# ╔═╡ 99468dd9-4b97-48e6-803b-489dc1cefdf8
-hint(md"You can modify the previous additive implementation below, by replacing the `PerturbedAdditive` regularization with a `PerturbedMultiplicative` one. You can also modify use `dijkstra_maximizer` instead of `belmann_maximizer` as the CO algorithm, which runs faster.")
-
-# ╔═╡ 0a0e7b32-e1f4-4d5c-8ebc-b5d06b61e6df
-
-
 # ╔═╡ f6d87e32-419a-48be-8054-f54fb6e4cef3
 question_box(md"Comment your experiments and results here")
 
 # ╔═╡ 8b46c5e6-f6ef-4372-a81d-d7eedb1a07d2
-still_missing(md"Write your answer here.")
+still_missing(md"Everything is better, the gap and loss are closer and reached faster that with previous optimizer (WARNING: the y scale scales dynamically! So even if the space gap in the Loss function seems bigger that with Bellman-Ford, it is actually not!)")
 
 # ╔═╡ 0fd29811-9e17-4c97-b9b7-ec9cc51b435f
 md"""
@@ -1418,6 +1409,24 @@ question_box(md"Comment your experiments and results here")
 # ╔═╡ d4a3de84-668d-4a89-b677-2a6cd2c24bb6
 still_missing(md"Write your answer here.")
 
+# ╔═╡ 5f834344-e66d-4208-b8cb-cd89784986a2
+perturbed_maximizer = PerturbedMultiplicative(chosen_maximizer; ε=ε, nb_samples=M)
+
+# ╔═╡ 73607123-a784-483e-9241-772e5937d59d
+# ╠═╡ disabled = true
+#=╠═╡
+perturbed_maximizer = PerturbedAdditive(chosen_maximizer; ε=ε, nb_samples=M)
+  ╠═╡ =#
+
+# ╔═╡ bc7eace5-f857-4189-b65a-6b0556b349e8
+chosen_maximizer = dijkstra_maximizer
+
+# ╔═╡ 8b2bd08c-866a-4c6e-a2fc-261dc8c05f2a
+# ╠═╡ disabled = true
+#=╠═╡
+chosen_maximizer = bellman_maximizer
+  ╠═╡ =#
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1466,7 +1475,7 @@ Zygote = "~0.6.67"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.4"
+julia_version = "1.10.4"
 manifest_format = "2.0"
 project_hash = "9062f98704d047968623f509042577676b4c9d5a"
 
@@ -1774,7 +1783,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+0"
+version = "1.1.1+0"
 
 [[deps.CompositionsBase]]
 git-tree-sha1 = "802bb88cd69dfd1509f6670416bd4434015693ad"
@@ -2590,8 +2599,13 @@ uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
 version = "8.4.0+0"
 
 [[deps.LibGit2]]
-deps = ["Base64", "NetworkOptions", "Printf", "SHA"]
+deps = ["Base64", "LibGit2_jll", "NetworkOptions", "Printf", "SHA"]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
+
+[[deps.LibGit2_jll]]
+deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll"]
+uuid = "e37daf67-58a4-590a-8e99-b0245dd2ffc5"
+version = "1.6.4+0"
 
 [[deps.LibSSH2_jll]]
 deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
@@ -2764,7 +2778,7 @@ version = "1.1.9"
 [[deps.MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
-version = "2.28.2+0"
+version = "2.28.2+1"
 
 [[deps.Measures]]
 git-tree-sha1 = "c13304c81eec1ed3af7fc20e75fb6b26092a1102"
@@ -2812,7 +2826,7 @@ version = "0.3.4"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
-version = "2022.10.11"
+version = "2023.1.10"
 
 [[deps.MutableArithmetics]]
 deps = ["LinearAlgebra", "SparseArrays", "Test"]
@@ -2893,7 +2907,7 @@ version = "0.2.4"
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.21+4"
+version = "0.3.23+4"
 
 [[deps.OpenEXR]]
 deps = ["Colors", "FileIO", "OpenEXR_jll"]
@@ -2910,7 +2924,7 @@ version = "3.1.4+0"
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "05823500-19ac-5b8b-9628-191a04bc5112"
-version = "0.8.1+0"
+version = "0.8.1+2"
 
 [[deps.OpenSSL]]
 deps = ["BitFlags", "Dates", "MozillaCACerts_jll", "OpenSSL_jll", "Sockets"]
@@ -2950,7 +2964,7 @@ version = "1.6.3"
 [[deps.PCRE2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
-version = "10.42.0+0"
+version = "10.42.0+1"
 
 [[deps.PNGFiles]]
 deps = ["Base64", "CEnum", "ImageCore", "IndirectArrays", "OffsetArrays", "libpng_jll"]
@@ -2996,7 +3010,7 @@ version = "0.42.2+0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.2"
+version = "1.10.0"
 
 [[deps.PkgVersion]]
 deps = ["Pkg"]
@@ -3142,7 +3156,7 @@ deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
 [[deps.Random]]
-deps = ["SHA", "Serialization"]
+deps = ["SHA"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[deps.RangeArrays]]
@@ -3317,6 +3331,7 @@ version = "1.2.0"
 [[deps.SparseArrays]]
 deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+version = "1.10.0"
 
 [[deps.SparseInverseSubset]]
 deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse"]
@@ -3381,7 +3396,7 @@ version = "1.4.2"
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
-version = "1.9.0"
+version = "1.10.0"
 
 [[deps.StatsAPI]]
 deps = ["LinearAlgebra"]
@@ -3417,9 +3432,9 @@ deps = ["Libdl", "LinearAlgebra", "Serialization", "SparseArrays"]
 uuid = "4607b0f0-06f3-5cda-b6b1-a6196a1729e9"
 
 [[deps.SuiteSparse_jll]]
-deps = ["Artifacts", "Libdl", "Pkg", "libblastrampoline_jll"]
+deps = ["Artifacts", "Libdl", "libblastrampoline_jll"]
 uuid = "bea87d4a-7f5b-5778-9afe-8cc45184846c"
-version = "5.10.1+6"
+version = "7.2.1+1"
 
 [[deps.TOML]]
 deps = ["Dates"]
@@ -3765,7 +3780,7 @@ version = "0.10.1"
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
-version = "1.2.13+0"
+version = "1.2.13+1"
 
 [[deps.Zstd_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -3816,7 +3831,7 @@ version = "0.15.1+0"
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.8.0+0"
+version = "5.8.0+1"
 
 [[deps.libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -3850,7 +3865,7 @@ version = "1.52.0+1"
 [[deps.p7zip_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
-version = "17.4.0+0"
+version = "17.4.0+2"
 
 [[deps.x264_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -3906,7 +3921,7 @@ version = "1.4.1+1"
 # ╟─61c624df-384a-4f01-a1c2-20d09d43aa74
 # ╠═4b59b997-dc7d-49a9-8557-87d908673c22
 # ╟─0fe3676f-70a4-4730-9ce9-ac5bc4204284
-# ╟─446cb749-c1ec-46a1-8cff-74a99d0cc2d9
+# ╠═446cb749-c1ec-46a1-8cff-74a99d0cc2d9
 # ╟─7db83f4b-0f9c-4d27-9a5e-bc6aacdae186
 # ╟─1ca1d8a3-d7bc-4386-8142-29c5cf2a87a0
 # ╠═f370c7c5-0f39-4efa-a298-d913a591412d
@@ -4058,7 +4073,8 @@ version = "1.4.1+1"
 # ╟─43d68541-84a5-4a63-9d8f-43783cc27ccc
 # ╟─5c6d39b0-9942-4173-9455-39cb3c174873
 # ╟─99468dd9-4b97-48e6-803b-489dc1cefdf8
-# ╠═0a0e7b32-e1f4-4d5c-8ebc-b5d06b61e6df
+# ╠═bc7eace5-f857-4189-b65a-6b0556b349e8
+# ╠═5f834344-e66d-4208-b8cb-cd89784986a2
 # ╟─f6d87e32-419a-48be-8054-f54fb6e4cef3
 # ╠═8b46c5e6-f6ef-4372-a81d-d7eedb1a07d2
 # ╠═0fd29811-9e17-4c97-b9b7-ec9cc51b435f
